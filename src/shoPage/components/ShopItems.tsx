@@ -8,14 +8,11 @@ interface ShopItemsProps {
 
 const ShopItems: React.FC<ShopItemsProps> = ({ products }) => {
   // Filter products by 'Groceries' category
-  const filteredProducts = products.filter(
-    (product) => product.category === "Groceries"
-  );
 
   return (
     <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-20 mt-10">
       {/* Map through filtered products */}
-      {filteredProducts.map((product) => {
+      {products.map((product) => {
         // Log the product ID to the console for debugging
         console.log(`Rendering product with ID: ${product.id}`);
 

@@ -6,7 +6,10 @@ import Credits from "../../homePage/components/Credits"; // Adjust the path as n
 import DefaultDropdown from "../../shoPage/components/DefaultDropdown"; // Adjust the path as necessary
 
 const GroceryPage: React.FC = () => {
-  const firstPageProducts = products.slice(3, 12);
+  const filteredProducts = products.filter(
+    (product) => product.category === "Juice"
+  );
+
   return (
     <div className="flex flex-col bg-[#F8F6F3] w-full">
       <div className="flex flex-row w-full">
@@ -43,7 +46,7 @@ const GroceryPage: React.FC = () => {
           </div>
           <div className="flex w-[84%]">
             {/* Pass products to ShopItems */}
-            <ShopItems products={firstPageProducts} />
+            <ShopItems products={filteredProducts} />
           </div>
         </div>
       </div>
