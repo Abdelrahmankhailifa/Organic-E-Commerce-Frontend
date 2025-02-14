@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+"use client";
+
+import type React from "react";
+import { useState } from "react";
 
 const Checkout: React.FC = () => {
   const [paymentMethod, setPaymentMethod] = useState("check");
@@ -175,12 +178,11 @@ const Checkout: React.FC = () => {
             </label>
             <input
               type="text"
-              id="streetAddress"
-              name="streetAddress"
-              value={formData.streetAddress}
+              id="city"
+              name="city"
+              value={formData.city}
               onChange={handleChange}
               className="border w-full p-2 rounded mb-2"
-              placeholder="House number and street name"
               required
             />
           </div>
@@ -325,10 +327,21 @@ const Checkout: React.FC = () => {
                 />
                 <span>Check payments</span>
               </label>
-              <p className="text-gray-500 ml-6">
-                Please send a check to Store Name, Store Street, Store Town,
-                Store State / County, Store Postcode.
-              </p>
+              <div
+                className={`
+                overflow-hidden transition-all duration-300 ease-in-out
+                ${
+                  paymentMethod === "check"
+                    ? "max-h-24 opacity-100"
+                    : "max-h-0 opacity-0"
+                }
+              `}
+              >
+                <p className="text-gray-500 ml-6 p-4 bg-gray-50 rounded-md">
+                  Please send a check to Store Name, Store Street, Store Town,
+                  Store State / County, Store Postcode.
+                </p>
+              </div>
               <label className="flex items-center space-x-2">
                 <input
                   type="radio"
@@ -340,6 +353,20 @@ const Checkout: React.FC = () => {
                 />
                 <span>Cash on delivery</span>
               </label>
+              <div
+                className={`
+                overflow-hidden transition-all duration-300 ease-in-out
+                ${
+                  paymentMethod === "cash"
+                    ? "max-h-24 opacity-100"
+                    : "max-h-0 opacity-0"
+                }
+              `}
+              >
+                <p className="text-gray-500 ml-6 p-4 bg-gray-50 rounded-md">
+                  Pay with cash upon delivery.
+                </p>
+              </div>
             </div>
           </div>
           <button
