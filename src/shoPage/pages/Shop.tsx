@@ -1,46 +1,106 @@
-import { products } from "../../data/productsData";
-
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import SearchCol from "../components/SearchCol";
 import Credits from "../../homePage/components/Credits";
 import DefaultDropdown from "../components/DefaultDropdown";
+import { Product, products } from "../../data/productsData";
 import ShopItems from "../components/ShopItems";
 import Pagination from "../components/Pagination";
 
-function Shop() {
-  const firstPageProducts = products.slice(0, 9);
+function Shopage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Get URL parameters or set defaults
+  const currentPage = Number(searchParams.get("page")) || 1;
+  const sortOrder =
+    (searchParams.get("sort") as "default" | "highToLow" | "lowToHigh") ||
+    "default";
+
+  const totalProducts = products.length;
+  const productsPerPage = 9;
+
+  // Sorting function
+  const sortProducts = (
+    items: Product[],
+    order: "default" | "highToLow" | "lowToHigh"
+  ): Product[] => {
+    let sortedItems = [...items];
+
+    const getNumericPrice = (price: number | string) =>
+      typeof price === "number" ? price : Number(price.replace(/[^0-9.]/g, ""));
+
+    if (order === "highToLow") {
+      sortedItems.sort(
+        (a, b) => getNumericPrice(b.money) - getNumericPrice(a.money)
+      );
+    } else if (order === "lowToHigh") {
+      sortedItems.sort(
+        (a, b) => getNumericPrice(a.money) - getNumericPrice(b.money)
+      );
+    }
+
+    return sortedItems;
+  };
+
+  // Sort and paginate products
+  const sortedProducts = sortProducts(products, sortOrder);
+  const startIdx = (currentPage - 1) * productsPerPage;
+  const endIdx = startIdx + productsPerPage;
+  const paginatedProducts = sortedProducts.slice(startIdx, endIdx);
+
+  // Handle sorting changes
+  const handleSortChange = (order: "default" | "highToLow" | "lowToHigh") => {
+    setSearchParams({ page: String(1), sort: order });
+  };
+
+  // Handle pagination changes
+  const handlePageChange = (page: number) => {
+    setSearchParams({ page: String(page), sort: sortOrder });
+  };
 
   return (
     <div className="flex flex-col bg-[#F8F6F3] w-full">
       <div className="flex flex-row w-full">
-        <div className="flex flex-col ">
+        <div className="flex flex-col">
           <div className="flex">
             <SearchCol />
           </div>
         </div>
-        <div className="flex flex-col h-fit justify-start items-start slef-start w-full mt-12 pl-16">
+        <div className="flex flex-col h-fit justify-start items-start self-start w-full mt-12 pl-16">
           <div className="flex space-x-1">
             <a href="/" className="text-[#77779B] cursor-pointer ">
               Home
             </a>
             <span className="text-[#77779B] ">/</span>
-            <span className="text-[#77779B] ">Shop</span>
+            <a href="/home/shop/" className="text-[#77779B] cursor-pointer ">
+              Shop
+            </a>
+            <span className="text-[#77779B] ">/</span>
+            <span className="text-[#77779B] ">Page {currentPage}</span>
           </div>
           <div className="flex mt-5 mb-16">
-            <span className="text-[#8EC44F]  text-5xl font-serif font-semibold">
+            <span className="text-[#8EC44F] text-5xl font-serif font-semibold">
               Shop
             </span>
           </div>
           <div className="flex space-x-[47%] w-full ">
             <span className="text-[#333333] self-center">
-              Showing 1–9 of 12 results
+              Showing {paginatedProducts.length} of {totalProducts} results
             </span>
-            <DefaultDropdown />
+            <DefaultDropdown onSort={handleSortChange} />
           </div>
-          <div className="flex w-[84%]">
-            <ShopItems products={firstPageProducts} />
+
+          <div className="flex w-[86%] mt-10">
+            <ShopItems products={paginatedProducts} sortOrder={sortOrder} />{" "}
           </div>
+
           <div className="flex">
-            <Pagination />
+            <Pagination
+              totalProducts={totalProducts}
+              productsPerPage={productsPerPage}
+              currentPage={currentPage}
+              setCurrentPage={handlePageChange}
+            />
           </div>
         </div>
       </div>
@@ -52,4 +112,4 @@ function Shop() {
   );
 }
 
-export default Shop;
+export default Shopage;

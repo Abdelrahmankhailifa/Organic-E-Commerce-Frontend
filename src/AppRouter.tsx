@@ -10,9 +10,7 @@ import Contact from "./contact page/pages/Contact";
 import Home from "./homePage/pages/Home";
 import { ProductPage } from "./productPage/pages/ProductPage";
 import Shop from "./shoPage/pages/Shop";
-import Shopage2 from "./shoPage/pages/Shopage2";
 import GroceryPage from "./groceryPage/pages/GroceryPage";
-import GroceryPage2 from "./groceryPage/pages/GroceryPage2";
 import JuicePage from "./juicePage/pages/JuicePage";
 import Cart from "./cartPage/pages/Cart";
 import Checkout from "./chekcoutPage/pages/Checkout";
@@ -47,7 +45,6 @@ function AppRouter() {
           ),
           children: [
             { path: "", element: <Shop /> }, // Shop homepage
-            { path: "page/2", element: <Shopage2 /> }, // Paginated shop page
           ],
         },
         {
@@ -59,7 +56,6 @@ function AppRouter() {
           ),
           children: [
             { path: "", element: <GroceryPage /> }, // Groceries page
-            { path: "page/2", element: <GroceryPage2 /> },
           ],
         },
         {

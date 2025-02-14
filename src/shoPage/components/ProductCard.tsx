@@ -37,8 +37,10 @@ const ProductCard: React.FC<Product> = ({
       <div className="flex items-center gap-2 mt-1">
         {discountedPrice ? (
           <>
-            <span className="text-gray-400 line-through">{money}</span>
-            <span className="text-[#333333] font-bold">{discountedPrice}</span>
+            <span className="text-gray-400 line-through">
+              {discountedPrice}
+            </span>
+            <span className="text-[#333333] font-bold">{money}</span>
           </>
         ) : (
           <span className="text-[#333333] font-bold">{money}</span>

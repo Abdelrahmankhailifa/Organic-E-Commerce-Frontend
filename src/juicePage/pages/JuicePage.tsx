@@ -1,14 +1,71 @@
 import React from "react";
-import { products } from "../../data/productsData"; // Adjust the path as necessary
-import ShopItems from "../../shoPage/components/ShopItems"; // Adjust the path as necessary
-import SearchCol from "../../shoPage/components/SearchCol"; // Adjust the path as necessary
-import Credits from "../../homePage/components/Credits"; // Adjust the path as necessary
-import DefaultDropdown from "../../shoPage/components/DefaultDropdown"; // Adjust the path as necessary
+import { Product, products } from "../../data/productsData";
+import ShopItems from "../../shoPage/components/ShopItems";
+import SearchCol from "../../shoPage/components/SearchCol";
+import Credits from "../../homePage/components/Credits";
+import DefaultDropdown from "../../shoPage/components/DefaultDropdown";
+import Pagination from "../../shoPage/components/Pagination";
+import { useSearchParams } from "react-router-dom";
 
-const GroceryPage: React.FC = () => {
+const JuicePage: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Get URL parameters or set defaults
+  const currentPage = Number(searchParams.get("page")) || 1;
+  const sortOrder =
+    (searchParams.get("sort") as "default" | "highToLow" | "lowToHigh") ||
+    "default";
+
+  // First filter the products
   const filteredProducts = products.filter(
     (product) => product.category === "Juice"
   );
+
+  const totalProducts = filteredProducts.length;
+  const productsPerPage = 9;
+
+  // Sorting function
+  const sortProducts = (
+    items: Product[],
+    order: "default" | "highToLow" | "lowToHigh"
+  ): Product[] => {
+    let sortedItems = [...items];
+
+    const getNumericPrice = (price: number | string) =>
+      typeof price === "number" ? price : Number(price.replace(/[^0-9.]/g, ""));
+
+    if (order === "highToLow") {
+      sortedItems.sort(
+        (a, b) => getNumericPrice(b.money) - getNumericPrice(a.money)
+      );
+    } else if (order === "lowToHigh") {
+      sortedItems.sort(
+        (a, b) => getNumericPrice(a.money) - getNumericPrice(b.money)
+      );
+    }
+
+    return sortedItems;
+  };
+
+  // Sort the filtered products
+  const sortedProducts = sortProducts(filteredProducts, sortOrder);
+
+  // Then paginate the sorted results
+  const startIdx = (currentPage - 1) * productsPerPage;
+  const endIdx = startIdx + productsPerPage;
+  const paginatedProducts = sortedProducts.slice(startIdx, endIdx);
+
+  // Handle sorting changes
+  const handleSortChange = (order: "default" | "highToLow" | "lowToHigh") => {
+    window.location.href = `/home/product-category/juice?page=1&sort=${order}`;
+  };
+
+  // Handle pagination changes
+  const handlePageChange = (page: number) => {
+    window.location.href = `/home/product-category/juice?page=${page}${
+      sortOrder !== "default" ? `&sort=${sortOrder}` : ""
+    }`;
+  };
 
   return (
     <div className="flex flex-col bg-[#F8F6F3] w-full">
@@ -18,35 +75,44 @@ const GroceryPage: React.FC = () => {
             <SearchCol />
           </div>
         </div>
-        <div className="flex flex-col h-fit justify-start items-start w-full mt-12 pl-16">
+        <div className="flex flex-col h-fit justify-start items-start self-start w-full mt-12 pl-16">
           <div className="flex space-x-1">
-            <a href="/" className="text-[#77779B] cursor-pointer ">
+            <a href="/" className="text-[#77779B] cursor-pointer">
               Home
             </a>
-            <span className="text-[#77779B] ">/</span>
-            <span className="text-[#77779B] ">Juices</span>
+            <span className="text-[#77779B]">/</span>
+            <a
+              href="/home/product-category/juice"
+              className="text-[#77779B] cursor-pointer"
+            >
+              juice
+            </a>
+            <span className="text-[#77779B]">/</span>
+            <span className="text-[#77779B]">Page {currentPage}</span>
           </div>
           <div className="flex mt-5 mb-16">
             <span className="text-[#8EC44F] text-5xl font-serif font-semibold">
               Juices
             </span>
           </div>
-          <div className="flex w-[84%] mb-10 text-[#333333]">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
-            dignissim, velit et luctus interdum, est quam scelerisque tellus,
-            eget luctus mi diam vitae erat. Praesent porttitor lacus vitae
-            dictum posuere. Suspendisse elementum metus ac dolor tincidunt, eu
-            imperdiet nisi dictum.
-          </div>
-          <div className="flex space-x-[47%] w-full ">
+          <div className="flex space-x-[47%] w-full">
             <span className="text-[#333333] self-center">
-              Showing 1–9 of 9 results
+              Showing {paginatedProducts.length} of {totalProducts} results
             </span>
-            <DefaultDropdown />
+            <DefaultDropdown onSort={handleSortChange} />
           </div>
-          <div className="flex w-[84%]">
-            {/* Pass products to ShopItems */}
-            <ShopItems products={filteredProducts} />
+
+          <div className="flex w-[86%] mt-10">
+            <ShopItems products={paginatedProducts} sortOrder={sortOrder} />
+          </div>
+
+          <div className="flex">
+            <Pagination
+              totalProducts={totalProducts}
+              productsPerPage={productsPerPage}
+              currentPage={currentPage}
+              setCurrentPage={handlePageChange}
+            />
           </div>
         </div>
       </div>
@@ -58,4 +124,4 @@ const GroceryPage: React.FC = () => {
   );
 };
 
-export default GroceryPage;
+export default JuicePage;

@@ -1,33 +1,54 @@
-function DefaultDropdown() {
-  return (
-    <select
-      className="ml-4 p-2 text-[#666666] rounded bg-transparent appearance-none focus:outline-none"
-      style={{
-        backgroundImage:
-          "url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEuNzA3MTksNC4yOTI5N0w4LjAwMDAxLDEwLjU4NTNMMTQuMjkyOCw0LjI5Mjk3IiBzdHJva2U9IiMzMzMzMzMiIHN0cm9rZS13aWR0aD0iMiIgLz4KPC9zdmc+Cg==)",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "right 0.5rem center",
-      }}
-    >
-      <option value="default " className="text-[#666666]">
-        Default sorting
-      </option>
-      <option value="popularity" className="text-[#666666]">
-        Sort by popularity
-      </option>
-      <option value="rating" className="text-[#666666]">
-        Sort by average rating
-      </option>
-      <option value="newness" className="text-[#666666]">
-        Sort by latest
-      </option>
-      <option value="priceLowToHigh" className="text-[#666666]">
-        Sort by price: low to high
-      </option>
-      <option value="priceHighToLow" className="text-[#666666]">
-        Sort by price: high to low
-      </option>
-    </select>
-  );
+import React, { useState } from "react";
+
+interface DefaultDropdownProps {
+  onSort: (order: "default" | "highToLow" | "lowToHigh") => void;
 }
+
+const DefaultDropdown: React.FC<DefaultDropdownProps> = ({ onSort }) => {
+  const [sortBy, setSortBy] = useState<"default" | "highToLow" | "lowToHigh">(
+    "default"
+  );
+
+  const handleSort = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value as "default" | "highToLow" | "lowToHigh";
+    setSortBy(value);
+    onSort(value);
+  };
+
+  return (
+    <div className="relative">
+      <select
+        value={sortBy}
+        onChange={handleSort}
+        className="ml-4 p-2 pr-8 text-gray-600 bg-transparent border border-gray-300 rounded-md appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      >
+        <option value="default" className="text-gray-600">
+          Default sorting
+        </option>
+        <option value="lowToHigh" className="text-gray-600">
+          Sort by price: low to high
+        </option>
+        <option value="highToLow" className="text-gray-600">
+          Sort by price: high to low
+        </option>
+      </select>
+      <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+        <svg
+          className="w-4 h-4 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </div>
+    </div>
+  );
+};
+
 export default DefaultDropdown;

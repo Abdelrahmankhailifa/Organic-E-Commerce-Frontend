@@ -6,6 +6,10 @@ export interface Product {
   discountedPrice?: string;
   category: string;
   quantity?: number;
+
+  popularity?: number; // Add popularity (optional)
+  rating?: number; // Add rating (optional)
+  price?: number; // Add price (optional)
 }
 
 export const products: Product[] = [
@@ -20,16 +24,16 @@ export const products: Product[] = [
     id: 2,
     title: "Cashew Butter",
     image: "/assets/cashew-butter-500.jpg",
-    money: "£35.00",
-    discountedPrice: "£25.00",
+    money: "£25.00",
+    discountedPrice: "£35.00",
     category: "Groceries",
   },
   {
     id: 3,
     title: "Diabetic Cookies",
     image: "/assets/diabetic-cookies.jpg",
-    money: "£35.00",
-    discountedPrice: "£25.00",
+    money: "£25.00",
+    discountedPrice: "£35.00",
     category: "Groceries",
   },
   {
